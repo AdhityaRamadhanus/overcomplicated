@@ -9,17 +9,17 @@ router
   .get('/:todoId',
     validateReq((req) => {
       req.checkParams('todoId', 'Please provide todoId').notEmpty().isInt()
-      req.sanitizeParams('todoId').toInt()
     }),
     todoHandler.getById)
   .post('/create', validateReq((req) => {
-    req.checkBody('title', 'Please provide Title').notEmpty()
+      req.checkBody('title', 'Please provide Title').notEmpty()
+      req.checkBody('details', 'Please provide details').notEmpty()
+      if (req.body.due_date) req.checkBody('due_date', 'Please provide ISO Date').custom((val) => !isNaN(Date.parse(val)))
     }),
     todoHandler.create)
   .post('/:todoId/update',
     validateReq((req) => {
       req.checkParams('todoId', 'Please provide todoId').notEmpty().isInt()
-      req.sanitizeParams('todoId').toInt()
     }),
     todoHandler.update)
 

@@ -4,6 +4,7 @@ const fs        = require('fs')
 const path      = require('path')
 const Sequelize = require('sequelize')
 const pg = require('pg')
+const config = require('./config/development')
 let models = {}
 exports.models = models
 exports.loadModels = (sequelize, modelsDir) => {
@@ -25,11 +26,11 @@ exports.loadModels = (sequelize, modelsDir) => {
 
 exports.init = () => {
   return new Promise((resolve, reject) => {
-    let connString = 'postgres://postgres:cihuy@localhost:5432/postgres'
-    let connStringDB = 'postgres://postgres:cihuy@localhost:5432/todo'
+    let connString = `${config.database.connstring}/postgres`
+    let connStringDB = `${config.database.connstring}/${config.database.dbname}`
     pg.connect(connString, (err, client, done) => {
       if (err) return reject(err)
-      client.query('CREATE DATABASE todo', () => {
+      client.query('CREATE DATABASE overcomplicated', () => {
           let sequelize = new Sequelize(connStringDB, {logging: false})
           client.end()
           return resolve(sequelize)

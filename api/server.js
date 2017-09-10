@@ -46,7 +46,7 @@ storage
   .init()
   .then((sequelize) => {
     global.sequelize = sequelize
-    storage.loadModels(sequelize, path.join(__dirname, 'models'))
+    storage.loadModels(sequelize, path.join(__dirname, '..', 'models'))
     return sequelize.sync()
   })
   .then(() => {
