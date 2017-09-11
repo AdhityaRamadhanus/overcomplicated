@@ -17,11 +17,13 @@ global.logger = new winston.Logger({
   transports: [
     new winston.transports.Console({
       colorize: true,
-      timestamp: true
+      timestamp: true,
+      level: 'info'
     }),
-    // new winston.transports.File({
-    //   filename: 'postgres-todo.log'
-    // })
+    new winston.transports.File({
+      filename: 'overcomplicated-error.log',
+      level: 'error'
+    })
   ],
   exitOnError: false
 })
@@ -30,6 +32,12 @@ logger.stream = {
   write: (message, encoding) => {
     logger.info(message)
   }
+}
+
+if (process.env.NODE_ENV === 'testing') {
+  // turn off logger
+  logger.transports.console.level = 'error';
+  logger.transports.file.level = 'error';
 }
 
 app.set('port', process.env.PORT || 8000)
@@ -51,10 +59,12 @@ storage
   })
   .then(() => {
     app.listen(app.get('port'), 'localhost', () => {
+      app.emit('running')
       logger.info('Api server is running')
     })
   })
   .catch((err) => {
+    app.emit('error', err)
     logger.error(err)
   })
 

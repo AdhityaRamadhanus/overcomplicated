@@ -1,9 +1,7 @@
 'use strict'
 
-'use strict'
-
 module.exports = (sequelize, DataTypes) => {
-  const Todo = sequelize.define("User", {
+  const User = sequelize.define("User", {
     firstname: {
       type: DataTypes.STRING,
       allowNull: false
@@ -22,5 +20,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   })
 
-  return Todo
+  return User
 }

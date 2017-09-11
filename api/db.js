@@ -6,11 +6,14 @@ const Sequelize = require('sequelize')
 const pg = require('pg')
 const config = require('./config/development')
 let models = {}
+let loadedModels = ['user', 'todo']
 exports.models = models
 exports.loadModels = (sequelize, modelsDir) => {
   fs
     .readdirSync(modelsDir)
     .filter((file) => (file.indexOf('.js') > 0 && file !== 'index.js'))
+    .map((file) => file.substr(0, file.length-3))
+    .filter((file) => loadedModels.includes(file))
     .forEach((file) => {
       let model = sequelize.import(path.join(modelsDir, file))
       logger.info('Loading models', model.name)
@@ -30,7 +33,9 @@ exports.init = () => {
     let connStringDB = `${config.database.connstring}/${config.database.dbname}`
     pg.connect(connString, (err, client, done) => {
       if (err) return reject(err)
-      client.query('CREATE DATABASE overcomplicated', () => {
+      let creationQuery = `CREATE DATABASE ${config.database.dbname}`
+      console.log(creationQuery)
+      client.query(creationQuery, () => {
           let sequelize = new Sequelize(connStringDB, {logging: false})
           client.end()
           return resolve(sequelize)

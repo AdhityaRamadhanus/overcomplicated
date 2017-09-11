@@ -3,8 +3,10 @@ const express = require('express')
 const router = express.Router()
 const validateReq = require('../middlewares/validate-req')
 const todoHandler = require('../handler/todo')
+const auth = require('../middlewares/auth')
 
 router
+  .all('*', auth)
   .get('/', todoHandler.getAll)
   .get('/:todoId',
     validateReq((req) => {

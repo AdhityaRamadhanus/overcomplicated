@@ -8,7 +8,10 @@ exports.getAll = (req, res, next) => {
   let page = parseInt(req.query.page) || 0
   let query = {
     limit: limit,
-    offset: page * limit
+    offset: page * limit,
+    where: {
+      userId: req.currentUser.id
+    }
   }
   models.Todo
     .findAll(query)
@@ -56,6 +59,7 @@ exports.getById = async (req, res, next) => {
 
 exports.create = (req, res, next) => {
   let todoObj = req.body
+  todoObj.userId = req.currentUser.id
   models.Todo
     .create(todoObj)
     .then((data) => {

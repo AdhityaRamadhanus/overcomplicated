@@ -20,5 +20,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   })
 
+  Todo.associate = (models) => {
+    Todo.belongsTo(models['User'], {foreignKey: 'userId'})
+  }
+
   return Todo
 }

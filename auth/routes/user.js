@@ -13,5 +13,11 @@ router
       req.checkBody('lastname', 'Please provide lastname').notEmpty()
     }),
     userHandler.register)
+  .post('/login',
+    validateReq((req) => {
+      req.checkBody('email', 'Please provide valid email').isEmail()
+      req.checkBody('password', 'Password is invalid').notEmpty()
+    }),
+    userHandler.login)
 
 module.exports = router
