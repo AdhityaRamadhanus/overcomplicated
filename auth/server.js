@@ -28,16 +28,25 @@ global.logger = new winston.Logger({
   exitOnError: false
 })
 
-logger.stream = {
-  write: (message, encoding) => {
-    logger.info(message)
-  }
-}
 
 if (process.env.NODE_ENV === 'testing') {
   // turn off logger
   logger.transports.console.level = 'error';
   logger.transports.file.level = 'error';
+  // set config
+  global.CONFIG = require('./config/testing')
+} else if (process.env.NODE_ENV === 'production') {
+  // set config
+  global.CONFIG = require('./config/production')
+} else {
+  // set config
+  global.CONFIG = require('./config/development')
+}
+
+logger.stream = {
+  write: (message, encoding) => {
+    logger.info(message)
+  }
 }
 
 app.set('port', process.env.PORT || 8000)
@@ -58,9 +67,9 @@ storage
     return sequelize.sync()
   })
   .then(() => {
-    app.listen(app.get('port'), 'localhost', () => {
+    app.listen(app.get('port'), '0.0.0.0', () => {
       app.emit('running')
-      logger.info('Api server is running')
+      logger.info('Api server is running on port', app.get('port'))
     })
   })
   .catch((err) => {

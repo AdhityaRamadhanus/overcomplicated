@@ -11,13 +11,13 @@ exports.register = (req, res) => {
   models.User
     .create(user)
     .then((data) => {
-
       let payload = {
         email: data.dataValues.email,
         id: data.dataValues.id,
         createdAt: new Date()
       }
-      let token = jwt.sign(payload, process.env.JWT_SECRET_KEY || 'overcomplicated', {expiresIn: 60*30})
+
+      let token = jwt.sign(payload, CONFIG.jwt_secret_key, {expiresIn: 60*30})
 
       return res.status(200).json({
         message: 'succesfully registered!',
@@ -56,7 +56,8 @@ exports.login = (req, res) => {
         id: data.dataValues.id,
         createdAt: new Date()
       }
-      let token = jwt.sign(payload, process.env.JWT_SECRET_KEY || 'overcomplicated', {expiresIn: 60*30})
+
+      let token = jwt.sign(payload, CONFIG.jwt_secret_key, {expiresIn: 60*30})
       return res.status(200).json({
         message: 'succesfully logged in!',
         data: {

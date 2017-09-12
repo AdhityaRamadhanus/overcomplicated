@@ -4,14 +4,6 @@ const fs        = require('fs')
 const path      = require('path')
 const Sequelize = require('sequelize')
 const pg = require('pg')
-let config = {}
-
-
-if (process.env.NODE_ENV === 'testing') {
-  config = require('./config/testing')
-} else {
-  config = require('./config/development')
-}
 
 let models = {}
 let loadedModels = ['user']
@@ -38,11 +30,11 @@ exports.loadModels = (sequelize, modelsDir) => {
 
 exports.init = () => {
   return new Promise((resolve, reject) => {
-    let connString = `${config.database.connstring}/postgres`
-    let connStringDB = `${config.database.connstring}/${config.database.dbname}`
+    let connString = `${CONFIG.database.connstring}/postgres`
+    let connStringDB = `${CONFIG.database.connstring}/${CONFIG.database.dbname}`
     pg.connect(connString, (err, client, done) => {
       if (err) return reject(err)
-      let creationQuery = `CREATE DATABASE ${config.database.dbname}`
+      let creationQuery = `CREATE DATABASE ${CONFIG.database.dbname}`
       client.query(creationQuery, () => {
           let sequelize = new Sequelize(connStringDB, {logging: false})
           client.end()
