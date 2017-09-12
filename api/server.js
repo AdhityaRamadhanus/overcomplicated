@@ -17,14 +17,31 @@ global.logger = new winston.Logger({
   transports: [
     new winston.transports.Console({
       colorize: true,
-      timestamp: true
+      timestamp: true,
+      level: 'info'
     }),
-    // new winston.transports.File({
-    //   filename: 'postgres-todo.log'
-    // })
+    new winston.transports.File({
+      filename: 'overcomplicated-error.log',
+      level: 'error'
+    })
   ],
   exitOnError: false
 })
+
+
+if (process.env.NODE_ENV === 'testing') {
+  // turn off logger
+  logger.transports.console.level = 'error';
+  logger.transports.file.level = 'error';
+  // set config
+  global.CONFIG = require('./config/testing')
+} else if (process.env.NODE_ENV === 'production') {
+  // set config
+  global.CONFIG = require('./config/production')
+} else {
+  // set config
+  global.CONFIG = require('./config/development')
+}
 
 logger.stream = {
   write: (message, encoding) => {
@@ -32,7 +49,7 @@ logger.stream = {
   }
 }
 
-app.set('port', process.env.PORT || 3000)
+app.set('port', process.env.PORT || 8000)
 app.set('env', process.env.NODE_ENV || 'development')
 
 app.use(morgan('tiny', { 'stream': logger.stream }))
@@ -50,11 +67,13 @@ storage
     return sequelize.sync()
   })
   .then(() => {
-    app.listen(app.get('port'), 'localhost', () => {
-      logger.info('Api server is running')
+    app.listen(app.get('port'), '0.0.0.0', () => {
+      app.emit('running')
+      logger.info('Api server is running on port', app.get('port'))
     })
   })
   .catch((err) => {
+    app.emit('error', err)
     logger.error(err)
   })
 

@@ -64,7 +64,7 @@ exports.create = (req, res, next) => {
     .create(todoObj)
     .then((data) => {
       return res.status(200).json({
-        message: 'succesfully created',
+        message: 'succesfully created!',
         data: data.dataValues,
         timestamp: new Date().toISOString(),
       })
