@@ -1,5 +1,15 @@
 version: "2"
 services:
+  api:
+    build:
+      context: "."
+      dockerfile: "./api/Dockerfile"
+    ports:
+      - "3000:3000"
+    environment:
+      - "NODE_ENV=production"
+    links:
+      - "postgres:postgres"
   auth:
     build:
       context: "."
