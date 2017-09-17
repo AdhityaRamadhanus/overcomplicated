@@ -6,7 +6,7 @@ const Sequelize = require('sequelize')
 const pg = require('pg')
 
 let models = {}
-let loadedModels = ['user', 'todo']
+let loadedModels = ['todo']
 
 exports.models = models
 exports.loadModels = (sequelize, modelsDir) => {
